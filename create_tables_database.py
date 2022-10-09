@@ -3,7 +3,7 @@ from app.config.database import engine
 
 
 async def create_tables() -> None:
-    import models.__all__models
+    import app.models.__all_models
     
     print('Criando as tabelas no banco de dados')
 
