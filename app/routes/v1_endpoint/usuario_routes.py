@@ -16,7 +16,21 @@ from config.auth import autenticar, criar_token_acesso
 
 router = APIRouter()
 
-# POST Login
+
+@router.post('/registra-usuarios', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
+async def create_user(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
+    novo_usuario: UsuarioModel = UsuarioModel(email=usuario.email, senha=gerar_hash_senha(usuario.senha))
+    async with db as session:
+        try:
+            session.add(novo_usuario)
+            await session.commit()
+
+            return novo_usuario
+        except IntegrityError:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                detail='Já existe um usuário com este email cadastrado.')
+
+
 @router.post('/login')
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
     usuario = await autenticar(email=form_data.username, senha=form_data.password, db=db)
@@ -27,3 +41,4 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+
