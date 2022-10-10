@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from app.routes.api_config import api_router
 
-
-API_V1_STR: str = '/api/v1'
+from app.config.configs import settings
 
 app = FastAPI(title=' API - Li-Sense')
-app.include_router(api_router, prefix=API_V1_STR)
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
 if __name__ == '__main__':

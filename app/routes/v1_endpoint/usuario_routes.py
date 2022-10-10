@@ -8,18 +8,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
-from models.usuario import UsuarioModel
-from schemas.usuario_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
-from config.deps import get_session, get_current_user
-from config.security import gerar_hash_senha
-from config.auth import autenticar, criar_token_acesso
+from app.models.usuario import UsuarioModel
+from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
+from app.config.deps import get_session, get_current_user
+from app.config.security import gerar_hash_senha
+from app.config.auth import autenticar, criar_token_acesso
 
 router = APIRouter()
 
 
 @router.post('/registra-usuarios', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
 async def create_user(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
-    novo_usuario: UsuarioModel = UsuarioModel(email=usuario.email, senha=gerar_hash_senha(usuario.senha))
+    novo_usuario: UsuarioModel = UsuarioModel(email=usuario.email, senha=gerar_hash_senha(usuario.senha),
+                                               nome=usuario.nome, sobrenome=usuario.sobrenome, celular=usuario.celular)
     async with db as session:
         try:
             session.add(novo_usuario)

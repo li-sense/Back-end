@@ -8,9 +8,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from jwt import jwt
+from jose import jwt
 
-from models.usuario import UsuarioModel
+from app.models.usuario import UsuarioModel
 from .configs import settings
 from .security import verificar_senha
 
