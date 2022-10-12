@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from jose import jwt
 
-from app.models.usuario import UsuarioModel
+from app.models.usuario_models import UsuarioModel
 from .configs import settings
 from .security import verificar_senha
 

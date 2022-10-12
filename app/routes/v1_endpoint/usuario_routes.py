@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
-from app.models.usuario import UsuarioModel
+from app.models.usuario_models import UsuarioModel
 from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
 from app.config.deps import get_session, get_current_user
 from app.config.security import gerar_hash_senha
