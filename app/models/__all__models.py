@@ -2,4 +2,4 @@
 
 from .product_models import ProductModel
 from .usuario_models import UsuarioModel
-from .vendedor_models import VendedorModels
+from .vendedor_models import VendedorModel
