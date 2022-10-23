@@ -46,6 +46,74 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
 
 
+@router.get('/', response_model=List[UsuarioSchemaBase])
+async def get_usuarios(db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel)
+        result = await session.execute(query)
+        usuarios: List[UsuarioSchemaBase] = result.scalars().unique().all()
+
+        return usuarios
+
+
+
+@router.get('/{usuario_id}', response_model=UsuarioSchemasVendedor, status_code=status.HTTP_200_OK)
+async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
+        result = await session.execute(query)
+        usuario: UsuarioSchemasVendedor = result.scalars().unique().one_or_none()
+
+        if usuario:
+            return usuario
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.put('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_202_ACCEPTED)
+async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
+        result = await session.execute(query)
+        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+
+        if usuario_up:
+            if usuario.nome:
+                usuario_up.nome = usuario.nome
+            if usuario.sobrenome:
+                usuario_up.sobrenome = usuario.sobrenome
+            if usuario.email:
+                usuario_up.email = usuario.email
+            if usuario.celular:
+                usuario_up.celular = usuario.celular
+            if usuario.senha:
+                usuario_up.senha = gerar_hash_senha(usuario.senha)
+
+            await session.commit()
+
+            return usuario_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+
+
+
+@router.delete('/{usuario_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
+        result = await session.execute(query)
+        usuario_del: UsuarioSchemasVendedor = result.scalars().unique().one_or_none()
+
+        if usuario_del:
+            await session.delete(usuario_del)
+            await session.commit()
+
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+
+
 # Google
 
 @router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
@@ -78,3 +146,5 @@ async def login_google(form_data: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+
+
