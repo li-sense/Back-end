@@ -12,6 +12,3 @@ class ProductModel(settings.DBBaseModel):
     descricao: str = Column(String(256), nullable=False)
     preco: float = Column(Float, nullable=False)
     detalhes: str = Column(String(500), nullable=False)
-
-    vendedor_id = Column(Integer, ForeignKey('vendedor_cadastro.id'))
-    vendedor_criador = relationship("VendedorModel", back_populates='produtos', lazy='joined')

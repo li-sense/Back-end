@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=VendedorSchemas)
 async def criacao_vendedor(vendedor: VendedorSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
-    novo_vendedor: VendedorModel = VendedorModel(identificado=consulta_cnpj(vendedor.identificado, usuario_id=vendedor.usuario_id))
+    novo_vendedor: VendedorModel = VendedorModel(identificado=consulta_cnpj(vendedor.identificado), usuario_id=vendedor.usuario_id,)
 
     db.add(novo_vendedor)
     await db.commit()
