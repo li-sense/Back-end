@@ -43,3 +43,4 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
 
+

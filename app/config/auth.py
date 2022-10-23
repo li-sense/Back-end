@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from jose import jwt
 
 from app.models.usuario_models import UsuarioModel
+from app.models.usuario_google_models import UsuarioGoogleModel
 from .configs import settings
 from .security import verificar_senha
 
@@ -19,6 +20,10 @@ from pydantic import EmailStr
 oauth2_schema = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/usuarios/login"
 )
+
+#oauth2_schema_google = OAuth2PasswordBearer(
+   # tokenUrl=f"{settings.API_V1_STR}/usuarios-google/login-google"
+#)
 
 async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[UsuarioModel]:
     async with db as session:
@@ -30,6 +35,20 @@ async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[
             return None
 
         if not verificar_senha(senha, usuario.senha):
+            return None
+
+        return usuario
+    
+async def autentica_google(email: EmailStr, senha: str, db: AsyncSession) -> Optional[UsuarioGoogleModel]:
+     async with db as session:
+        query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.email == email)
+        result = await session.execute(query)
+        usuario: UsuarioGoogleModel = result.scalars().unique().one_or_none()
+
+        if not usuario:
+            return None
+
+        if not verificar_senha(senha, usuario.sub):
             return None
 
         return usuario
