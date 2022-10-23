@@ -21,10 +21,6 @@ oauth2_schema = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/usuarios/login"
 )
 
-#oauth2_schema_google = OAuth2PasswordBearer(
-   # tokenUrl=f"{settings.API_V1_STR}/usuarios-google/login-google"
-#)
-
 async def autenticar(email: EmailStr, senha: str, db: AsyncSession) -> Optional[UsuarioModel]:
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.email == email)
