@@ -6,3 +6,6 @@ class Product_schema(BaseModel):
     descricao: str
     preco: float
     detalhes: str
+
+    class Config:
+        orm_mode = True
