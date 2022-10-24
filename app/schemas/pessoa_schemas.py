@@ -1,7 +1,9 @@
 from typing import Optional
+from pydantic import BaseModel, EmailStr, HttpUrl
 
-from pydantic import BaseModel, EmailStr
-
+class Imagem(BaseModel):
+    url: HttpUrl
+    nome: str
 
 class UsuarioSchemaBase(BaseModel):
     id: Optional[int] = None
@@ -9,6 +11,8 @@ class UsuarioSchemaBase(BaseModel):
     nome : str
     sobrenome : str
     celular : str
+    imagem : Imagem | None = None
+
 
     class Config:
         orm_mode = True
@@ -24,3 +28,5 @@ class UsuarioSchemaUp(UsuarioSchemaBase):
     nome : Optional[str]
     sobrenome : Optional[str]
     celular : Optional[str]
+    imagem : Optional[Imagem]
+
