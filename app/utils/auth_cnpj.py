@@ -18,7 +18,7 @@ def consulta_cnpj(cnpj_identificador: str):
 
     resp = json.loads(response.text)
 
-    if resp['situacao'] == 'ATIVA':
+    if resp['status'] != 'ERROR' and resp['situacao'] == 'ATIVA':
         return cnpj_identificador
     else:
         raise HTTPException(detail='CNPJ Invalidor!', status_code=status.HTTP_400_BAD_REQUEST)

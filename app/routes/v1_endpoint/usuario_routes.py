@@ -64,12 +64,12 @@ async def get_usuarios(db: AsyncSession = Depends(get_session)):
 
 
 
-@router.get('/{usuario_id}', response_model=UsuarioSchemasVendedor, status_code=status.HTTP_200_OK)
+@router.get('/{usuario_id}', response_model=UsuarioSchemaBase, status_code=status.HTTP_200_OK)
 async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
-        usuario: UsuarioSchemasVendedor = result.scalars().unique().one_or_none()
+        usuario: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
         if usuario:
             return usuario
@@ -110,7 +110,7 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
     async with db as session:
         query = select(UsuarioModel).filter(UsuarioModel.id == usuario_id)
         result = await session.execute(query)
-        usuario_del: UsuarioSchemasVendedor = result.scalars().unique().one_or_none()
+        usuario_del: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
         if usuario_del:
             await session.delete(usuario_del)

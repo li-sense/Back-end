@@ -57,7 +57,7 @@ async def put_vendedores(vendedor_id: int, vendedor: VendedorSchemas, logado: Us
 
         if vendedor_up:
             if vendedor.identificado:
-                vendedor_up.identificado = consulta_cnpj(vendedor_id.identificado)
+                vendedor_up.identificado = consulta_cnpj(vendedor.identificado)
             if logado.id != vendedor.usuario_id:
                 vendedor_up.usuario_id = logado.id
 
@@ -74,7 +74,7 @@ async def del_vendedores(vendedor_id: int, db: AsyncSession = Depends(get_sessio
     async with db as session:
         query = select(VendedorModel).filter(VendedorModel.id == vendedor_id).filter(VendedorModel.usuario_id == logado.id)
         result = await session.execute(query)
-        vendedor_del = VendedorModel = result.scalars().unique().one_or_none()
+        vendedor_del: VendedorModel = result.scalars().unique().one_or_none()
 
         if vendedor_del:
             await session.delete(vendedor_del)

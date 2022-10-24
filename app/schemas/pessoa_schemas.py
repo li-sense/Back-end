@@ -1,5 +1,7 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr, HttpUrl
+
+from app.schemas.vendedor_schemas import VendedorSchemas
 
 class Imagem(BaseModel):
     url: HttpUrl
@@ -11,7 +13,7 @@ class UsuarioSchemaBase(BaseModel):
     nome : str
     sobrenome : str
     celular : str
-    imagem : Imagem or None = None
+    #imagem : Imagem or None = None
 
 
     class Config:
