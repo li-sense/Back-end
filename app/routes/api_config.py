@@ -12,7 +12,3 @@ api_router = APIRouter()
 api_router.include_router(usuario_routes.router, prefix='/usuarios', tags=['usuarios'])
 api_router.include_router(vendedor_routes.router, prefix='/vendedor', tags=['vendedor'])
 api_router.include_router(produto_routes.router, prefix='/produtos', tags=['produtos'])
-
-api_router.include_router(vendedor_routes.router, prefix='/vendedor', tags=['vendedor'])
-
-api_router.include_router(produto_routes.router, prefix='/produtos', tags=['produtos'])
