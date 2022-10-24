@@ -11,7 +11,7 @@ class UsuarioSchemaBase(BaseModel):
     nome : str
     sobrenome : str
     celular : str
-    imagem : Imagem | None = None
+    imagem : Imagem or None = None
 
 
     class Config:
