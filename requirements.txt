@@ -38,5 +38,6 @@ ujson==5.5.0
 urllib3==1.26.12
 uvicorn==0.18.3
 uvloop==0.17.0
+validate-docbr==1.10.0
 watchfiles==0.17.0
 websockets==10.3
