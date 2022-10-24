@@ -19,6 +19,12 @@ from app.config.auth import autenticar, criar_token_acesso, autentica_google
 router = APIRouter()
 
 
+# GET Logado
+@router.get('/logado', response_model=UsuarioSchemaBase)
+def get_logado(usuario_logado: UsuarioModel = Depends(get_current_user)):
+    return usuario_logado
+
+
 @router.post('/registra-usuarios', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
 async def create_user(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
     novo_usuario: UsuarioModel = UsuarioModel(email=usuario.email, senha=gerar_hash_senha(usuario.senha),
@@ -44,6 +50,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+
 
 
 # Google
@@ -78,3 +85,4 @@ async def login_google(form_data: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+
