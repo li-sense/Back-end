@@ -9,7 +9,7 @@ from app.config.deps import get_session, get_current_user
 from app.models.usuario_models import UsuarioModel
 from app.models.vendedor_models import VendedorModel
 from app.schemas.vendedor_schemas import VendedorSchemas
-from app.utils.teste_cnpj import consulta_cnpj
+from app.utils.auth_cnpj import consulta_cnpj
 
 
 router = APIRouter()
@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=VendedorSchemas)
 async def criacao_vendedor(vendedor: VendedorSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
-    novo_vendedor: VendedorModel = VendedorModel(identificado=consulta_cnpj(vendedor.identificado), usuario_id=vendedor.usuario_id,)
+    novo_vendedor: VendedorModel = VendedorModel(identificado=consulta_cnpj(vendedor.identificado), usuario_id=logado.id)
 
     db.add(novo_vendedor)
     await db.commit()
@@ -53,13 +53,13 @@ async def put_vendedores(vendedor_id: int, vendedor: VendedorSchemas, logado: Us
     async with db as session:
         query = select(VendedorModel).filter(VendedorModel.id == vendedor_id)
         result = await session.execute(query)
-        vendedor: VendedorModel = result.scalars().unique().one_or_none()
+        vendedor_up: VendedorModel = result.scalars().unique().one_or_none()
 
-        if vendedor:
+        if vendedor_up:
             if vendedor.identificado:
-                vendedor.identificado = consulta_cnpj(vendedor_id.identificado)
+                vendedor_up.identificado = consulta_cnpj(vendedor_id.identificado)
             if logado.id != vendedor.usuario_id:
-                vendedor.usuario_id = logado.id
+                vendedor_up.usuario_id = logado.id
 
             await session.commit()
 
