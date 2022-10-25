@@ -1,7 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, HttpUrl
 
-from app.schemas.vendedor_schemas import VendedorSchemas
 
 class Imagem(BaseModel):
     url: HttpUrl

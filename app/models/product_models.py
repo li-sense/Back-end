@@ -13,10 +13,10 @@ class ProductModel(settings.DBBaseModel):
     preco: float = Column(Float, nullable=False)
     detalhes: str = Column(String(500), nullable=False)
 
-    imagem = relationship("ImagensModel", back_populates="produtos")
+   # imagem = relationship("ImagensModel", back_populates="produtos")
 
 
-class ImagensModel(settings.DBBaseModel):
+"""class ImagensModel(settings.DBBaseModel):
     __tablename__ = "imagens"
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     url: str = Column(String(256))
@@ -28,4 +28,4 @@ class ImagensModel(settings.DBBaseModel):
     detalhes : str = Column(String(256))
 
     produto = relationship("ProductModel", back_populates="imagens")
-
+"""

@@ -11,7 +11,7 @@ class Product_schema(BaseModel):
     descricao: str
     preco: float
     detalhes: str
-    imagem: Imagem | None = None
+    #imagem: Imagem | None = None
 
     class Config:
         orm_mode = True
