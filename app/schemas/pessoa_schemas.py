@@ -12,8 +12,6 @@ class UsuarioSchemaBase(BaseModel):
     nome : str
     sobrenome : str
     celular : str
-    imagem : Imagem or None = None
-
 
     class Config:
         orm_mode = True
