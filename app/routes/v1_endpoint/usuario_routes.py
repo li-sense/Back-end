@@ -153,3 +153,5 @@ async def login_google(form_data: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+
+

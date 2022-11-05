@@ -16,7 +16,7 @@ class ProductModel(settings.DBBaseModel):
    # imagem = relationship("ImagensModel", back_populates="produtos")
 
 
-"""class ImagensModel(settings.DBBaseModel):
+"""class ImagensModel(setti ngs.DBBaseModel):
     __tablename__ = "imagens"
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     url: str = Column(String(256))
