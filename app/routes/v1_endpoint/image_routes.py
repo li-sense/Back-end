@@ -13,6 +13,7 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from app.models.usuario_models import UsuarioModel
+from app.models.image_model import ImagensModel
 from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
 from app.models.usuario_google_models import UsuarioGoogleModel
 from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas

@@ -1,7 +1,7 @@
 from email.policy import default
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-
+from app.models.image_model import ImagensModel
 from app.config.configs import settings
 
 class UsuarioModel(settings.DBBaseModel):

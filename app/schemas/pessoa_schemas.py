@@ -1,11 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, HttpUrl
 
-
-class Imagem(BaseModel):
-    url: HttpUrl
-    nome: str
-
 class UsuarioSchemaBase(BaseModel):
     id: Optional[int] = None
     email: EmailStr
@@ -27,5 +22,3 @@ class UsuarioSchemaUp(UsuarioSchemaBase):
     nome : Optional[str]
     sobrenome : Optional[str]
     celular : Optional[str]
-    imagem : Optional[Imagem]
-
