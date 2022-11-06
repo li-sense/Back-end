@@ -1,5 +1,5 @@
-from sqlalchemy import Integer, Float, String, Column, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, Column, ForeignKey, Boolean
+
 
 from app.config.configs import settings
 
