@@ -1,21 +1,13 @@
-from typing import List
-
-from fastapi import APIRouter, BackgroundTasks, FastAPI
+from fastapi import APIRouter
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
-from pydantic import BaseModel, EmailStr
 from dotenv import dotenv_values
 from starlette.responses import JSONResponse
+
+from app.schemas.certificado_schemas import EmailSchema
 
 router = APIRouter()
 
 config_credentials = dotenv_values(".env")
-
-class EmailSchema(BaseModel): 
-    email: List[EmailStr]
-
-class EmailContent(BaseModel):
-    message: str
-    subject: str
 
 conf = ConnectionConfig(
     MAIL_USERNAME = config_credentials["EMAIL"],
