@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models.usuario_models import UsuarioModel
 from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
 from app.models.usuario_google_models import UsuarioGoogleModel
-from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas
+from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas, UsuarioGoogleSchemasUp
 from app.config.deps import get_session, get_current_user
 from app.config.security import gerar_hash_senha
 from app.config.auth import autenticar, criar_token_acesso, autentica_google
@@ -200,5 +200,58 @@ async def login_google(form_data: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+                        
 
+@router.get('/{usuario_id}', response_model=UsuarioGoogleSchemas, status_code=status.HTTP_200_OK)
+async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.id == usuario_id)
+        result = await session.execute(query)
+        usuario: UsuarioGoogleSchemas = result.scalars().unique().one_or_none()
 
+        if usuario:
+            return usuario
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+@router.put('/{usuario_id}', response_model=UsuarioGoogleModel, status_code=status.HTTP_202_ACCEPTED)
+async def put_usuario(usuario_id: int, usuario: UsuarioGoogleSchemasUp, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.id == usuario_id)
+        result = await session.execute(query)
+        usuarioGoogle_up: UsuarioGoogleModel = result.scalars().unique().one_or_none()
+
+        if usuarioGoogle_up:
+            if usuario.name:
+                usuarioGoogle_up.name = usuario.name
+            if usuario.picture:
+                usuarioGoogle_up.picture = usuario.picture
+            if usuario.email:
+                usuarioGoogle_up.email = usuario.email
+            if usuario.email_verified:
+                usuarioGoogle_up.email_verified = usuario.email_verified
+            if usuario.give_name:
+                usuarioGoogle_up.give_name = usuario.give_name
+            if usuario.family_name:
+                usuarioGoogle_up.family_name = usuario.family_name
+            if usuario.aud:
+                usuarioGoogle_up.aud = usuario.aud
+            if usuario.azp:
+                usuarioGoogle_up.azp = usuario.azp
+            if usuario.exp:
+                usuarioGoogle_up.exp = usuario.exp
+            if usuario.iat:
+                usuarioGoogle_up.iat = usuario.iat
+            if usuario.iss:
+                usuarioGoogle_up.iss = usuario.iss
+            if usuario.jti:
+                usuarioGoogle_up.jti = usuario.jti
+            if usuario.nbf:
+                usuarioGoogle_up.nbf = usuario.nbf
+
+            await session.commit()
+
+            return usuarioGoogle_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
