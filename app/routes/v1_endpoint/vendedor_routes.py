@@ -4,6 +4,7 @@ from fastapi import APIRouter, status, Depends, HTTPException, Response
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 
 from app.config.deps import get_session, get_current_user
 from app.models.usuario_models import UsuarioModel
@@ -19,10 +20,15 @@ router = APIRouter()
 async def criacao_vendedor(vendedor: VendedorSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     novo_vendedor: VendedorModel = VendedorModel(identificado=consulta_cnpj(vendedor.identificado), usuario_id=logado.id)
 
-    db.add(novo_vendedor)
-    await db.commit()
+    async with db as session:
+        try:
+            session.add(novo_vendedor)
+            await session.commit()
 
-    return novo_vendedor
+            return novo_vendedor
+        except IntegrityError:
+            raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                                detail='Já existe o usuario vendedor.')
 
 
 @router.get("/", response_model=List[VendedorSchemas])

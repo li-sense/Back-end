@@ -13,6 +13,14 @@ class UsuarioModel(settings.DBBaseModel):
     sobrenome: str = Column(String(256))
     celular: str = Column(String(13))
     senha: str = Column(String(256))
+   
     imagem = relationship("ImagensModel", uselist=False,backref="usuario")
     vendedor = relationship("VendedorModel",  uselist=False, backref="usuario")
     
+    avaliacao_usuario = relationship(
+        "AvalicaoProdutosModel",
+        cascade="all,delete-orphan",
+        back_populates="usuario_criado",
+        uselist=True,
+        lazy="joined"
+    )
