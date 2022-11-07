@@ -56,4 +56,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/front.li-sense:development
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/back.li-sense:development
