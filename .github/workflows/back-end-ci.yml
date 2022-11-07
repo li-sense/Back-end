@@ -1,4 +1,4 @@
-name: Li-sense Back-end
+name: Li-sense Back-end CI
 
 on:
   push:
