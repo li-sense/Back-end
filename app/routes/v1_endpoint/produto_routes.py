@@ -12,6 +12,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.models.usuario_models import UsuarioModel
 from app.models.product_models import ProductModel
+from app.models.image_produto_models import Imagens_Product_Model
 
 from app.schemas.product_schemas import Product_schema
 
@@ -114,34 +115,47 @@ async def delete_produto(product_id: int, db: AsyncSession = Depends(get_session
 
 @router.post("/uploadfile/product/{id}")
 async def create_upload_file(id: int,file: UploadFile = File(...),
-                                user : UsuarioModel = Depends(get_current_user)):
+                                user : UsuarioModel = Depends(get_current_user),db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(ProductModel).filter(ProductModel.id == id)
+        result = await session.execute(query)
+        product_up: ProductModel = result.scalars().unique().one_or_none()
+ 
+        if product_up:
+                FILEPATH = "./static/images/"
+                filename = file.filename
+                extension = filename.split(".")[1]
 
-    FILEPATH = "./static/images/"
-    filename = file.filename
-    extension = filename.split(".")[1]
+                if extension not in ["png","jpg"]:
+                    return {"status" : "error","detail":"file extension note allowed"}
+                
+                token_name = secrets.token_hex(10) + "." + extension
+                generated_name = FILEPATH + token_name
+                file_content = await file.read()
 
-    if extension not in ["png","jpg"]:
-        return {"status" : "error","detail":"file extension note allowed"}
-    
-    token_name = secrets.token_hex(10) + "." + extension
-    generated_name = FILEPATH + token_name
-    file_content = await file.read()
+                with open(generated_name,"wb") as file:
+                    file.write(file_content)
+                
+                #PILLOW
+                img = Image.open(generated_name)
+                img = img.resize(size = (200,200))
+                img.save(generated_name)
 
-    with open(generated_name,"wb") as file:
-        file.write(file_content)
-    
-    #PILLOW
-    img = Image.open(generated_name)
-    img = img.resize(size = (200,200))
-    img.save(generated_name)
 
-    file.close()
+                file.close()
+
+                file_url = "localhost:8000" + generated_name[1:]
+                nova_imagem: Imagens_Product_Model= Imagens_Product_Model(url = file_url,nome = token_name,id_produto = id)
+                db.add(nova_imagem)
+                await db.commit()
+                return {"status":"ok","filename":file_url}
+        else:
+           raise HTTPException(detail='Produto não encontrado',
+                               status_code=status.HTTP_404_NOT_FOUND)
 
     file_url = "localhost:8000" + generated_name[1:]
     return {"status":"ok","filename":file_url}
     
-    
-
 @router.post("/buy/{product_id}")
 async def buy_product_by_ticket(product_id : int, qty: int, db: AsyncSession = Depends(get_session)):
 
@@ -157,3 +171,4 @@ async def buy_product_by_ticket(product_id : int, qty: int, db: AsyncSession = D
         else:
             raise HTTPException(detail='Preço insuficiente para pagamento em boleto',
                                 status_code=status.HTTP_400_BAD_REQUEST)
+
