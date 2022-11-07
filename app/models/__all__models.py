@@ -6,3 +6,4 @@ from .usuario_google_models import UsuarioGoogleModel
 from .vendedor_models import VendedorModel
 from .image_model import ImagensModel
 from .image_produto_models import Imagens_Product_Model
+from .endereco_models import EnderecoModels

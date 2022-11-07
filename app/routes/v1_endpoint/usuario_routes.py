@@ -1,6 +1,6 @@
 from typing import List, Optional, Any
 
-from fastapi import APIRouter, status, Depends, HTTPException, Response
+from fastapi import APIRouter, status, Depends, HTTPException, Response, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 
@@ -15,6 +15,9 @@ from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas
 from app.config.deps import get_session, get_current_user
 from app.config.security import gerar_hash_senha
 from app.config.auth import autenticar, criar_token_acesso, autentica_google
+from app.schemas.usuario_mensagem_schemas import MensagemSchemas
+from app.utils.email_config import generate_password_reset_token, verify_password_reset_token, send_reset_password_email
+
 
 router = APIRouter()
 
@@ -120,7 +123,51 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
+@router.post('/recuperacao-senha/{email}', response_model=MensagemSchemas)
+async def recuperacao_senha(email: str, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel).filter(UsuarioModel.email == email)
+        result = await session.execute(query)
+        usuario: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
+        if usuario:
+            reset = generate_password_reset_token(email=email)
+
+            send_reset_password_email(
+                email_to=usuario.email, email=email, token=reset
+            )
+
+            return {"msg": "Password recovery email sent"}
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.post('/redefinir-senha', response_model=MensagemSchemas)
+async def redefinir_senha(token: str = Body(...), new_password: str = Body(...), db: AsyncSession = Depends(get_session)):
+    async with db as session:
+
+        email = verify_password_reset_token(token)
+
+        if not email:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+        query = select(UsuarioModel).filter(UsuarioModel.email == email)
+        result = await session.execute(query)
+        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+
+        if usuario_up:
+            usuario_up.senha = gerar_hash_senha(new_password)
+
+            await session.commit()
+
+            return usuario_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+            
+            
 # Google
 
 @router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
