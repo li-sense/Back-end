@@ -3,6 +3,7 @@ from typing import List, Optional, Any
 from fastapi import APIRouter, status, Depends, HTTPException, Response, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -215,7 +216,7 @@ async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
             raise HTTPException(detail='Usuário não encontrado.',
                                 status_code=status.HTTP_404_NOT_FOUND)
 
-@router.put('/{usuario_id}', response_model=UsuarioGoogleModel, status_code=status.HTTP_202_ACCEPTED)
+@router.put('/{usuario_id}', response_model=UsuarioGoogleSchemasUp, status_code=status.HTTP_202_ACCEPTED)
 async def put_usuario(usuario_id: int, usuario: UsuarioGoogleSchemasUp, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.id == usuario_id)

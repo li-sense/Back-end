@@ -13,3 +13,7 @@ Instalar as dependências do projeto:
 Atualizar o arquivo de dependências, caso haja novas dependencias:  
 
 ``pip freeze > requirements.txt``
+
+Inicializar o Projeto
+
+`` uvicorn main:app --reload ``
