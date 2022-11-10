@@ -71,7 +71,7 @@ async def put_vendedores(vendedor_id: int, vendedor: VendedorSchemas, logado: Us
 
             return vendedor    
         else:
-            raise HTTPException(detail='Artigo não encontrado', status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(detail='Vendedor não encontrado', status_code=status.HTTP_404_NOT_FOUND)
 
 
 

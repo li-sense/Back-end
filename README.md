@@ -17,3 +17,8 @@ Atualizar o arquivo de dependências, caso haja novas dependencias:
 Inicializar o Projeto
 
 `` uvicorn main:app --reload ``
+
+Criacao do Banco de Dados
+
+`` python create_tables_database.py ``
+

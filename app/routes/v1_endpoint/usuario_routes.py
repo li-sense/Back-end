@@ -171,7 +171,7 @@ async def redefinir_senha(token: str = Body(...), new_password: str = Body(...),
             
 # Google
 
-@router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
+"""@router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
 async def create_user_google(usuario: UsuarioGoogleSchemas, db: AsyncSession = Depends(get_session)):
     novo_usuario: UsuarioGoogleModel = UsuarioGoogleModel(sub=gerar_hash_senha(usuario.sub), email=usuario.email, picture=usuario.picture,
                                                           aud=usuario.aud, azp=usuario.azp, email_verified=usuario.email_verified,
@@ -255,4 +255,4 @@ async def put_usuario(usuario_id: int, usuario: UsuarioGoogleSchemasUp, db: Asyn
 
             return usuarioGoogle_up
         else:
-            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)"""
