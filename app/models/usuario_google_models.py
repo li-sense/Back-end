@@ -1,10 +1,10 @@
-from email.policy import default
 from sqlalchemy import Column, Integer, String, Boolean
 
 from app.config.configs import settings
 
 class UsuarioGoogleModel(settings.DBBaseModel):
     __tablename__ = "usuario-google"
+    
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     sub:  str = Column(String(256))
     email: str = Column(String(256))
@@ -20,4 +20,3 @@ class UsuarioGoogleModel(settings.DBBaseModel):
     jti: str = Column(String(256))
     name: str = Column(String(256))
     nbf: str = Column(String(256))
-    

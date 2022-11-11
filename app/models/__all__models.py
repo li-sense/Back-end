@@ -4,4 +4,7 @@ from .product_models import ProductModel
 from .usuario_models import UsuarioModel
 from .usuario_google_models import UsuarioGoogleModel
 from .vendedor_models import VendedorModel
-
+from .avaliacao_produtos_models import AvalicaoProdutosModel
+from .image_model import ImagensModel
+from .image_produto_models import Imagens_Product_Model
+from .endereco_models import EnderecoModels

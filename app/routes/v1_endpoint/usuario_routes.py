@@ -1,8 +1,9 @@
 from typing import List, Optional, Any
 
-from fastapi import APIRouter, status, Depends, HTTPException, Response
+from fastapi import APIRouter, status, Depends, HTTPException, Response, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -11,10 +12,13 @@ from sqlalchemy.exc import IntegrityError
 from app.models.usuario_models import UsuarioModel
 from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
 from app.models.usuario_google_models import UsuarioGoogleModel
-from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas
+from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas, UsuarioGoogleSchemasUp
 from app.config.deps import get_session, get_current_user
 from app.config.security import gerar_hash_senha
 from app.config.auth import autenticar, criar_token_acesso, autentica_google
+from app.schemas.usuario_mensagem_schemas import MensagemSchemas
+from app.utils.email_config import generate_password_reset_token, verify_password_reset_token, send_reset_password_email
+
 
 router = APIRouter()
 
@@ -120,10 +124,54 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
+@router.post('/recuperacao-senha/{email}', response_model=MensagemSchemas)
+async def recuperacao_senha(email: str, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioModel).filter(UsuarioModel.email == email)
+        result = await session.execute(query)
+        usuario: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
+        if usuario:
+            reset = generate_password_reset_token(email=email)
+
+            send_reset_password_email(
+                email_to=usuario.email, email=email, token=reset
+            )
+
+            return {"msg": "Password recovery email sent"}
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+
+@router.post('/redefinir-senha', response_model=MensagemSchemas)
+async def redefinir_senha(token: str = Body(...), new_password: str = Body(...), db: AsyncSession = Depends(get_session)):
+    async with db as session:
+
+        email = verify_password_reset_token(token)
+
+        if not email:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+        query = select(UsuarioModel).filter(UsuarioModel.email == email)
+        result = await session.execute(query)
+        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+
+        if usuario_up:
+            usuario_up.senha = gerar_hash_senha(new_password)
+
+            await session.commit()
+
+            return usuario_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+            
+            
 # Google
 
-@router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
+"""@router.post('/registra-usuarios-google', status_code=status.HTTP_201_CREATED, response_model=UsuarioGoogleSchemas)
 async def create_user_google(usuario: UsuarioGoogleSchemas, db: AsyncSession = Depends(get_session)):
     novo_usuario: UsuarioGoogleModel = UsuarioGoogleModel(sub=gerar_hash_senha(usuario.sub), email=usuario.email, picture=usuario.picture,
                                                           aud=usuario.aud, azp=usuario.azp, email_verified=usuario.email_verified,
@@ -153,3 +201,58 @@ async def login_google(form_data: OAuth2PasswordRequestForm = Depends(), db: Asy
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
+                        
+
+@router.get('/{usuario_id}', response_model=UsuarioGoogleSchemas, status_code=status.HTTP_200_OK)
+async def get_usuario(usuario_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.id == usuario_id)
+        result = await session.execute(query)
+        usuario: UsuarioGoogleSchemas = result.scalars().unique().one_or_none()
+
+        if usuario:
+            return usuario
+        else:
+            raise HTTPException(detail='Usuário não encontrado.',
+                                status_code=status.HTTP_404_NOT_FOUND)
+
+@router.put('/{usuario_id}', response_model=UsuarioGoogleSchemasUp, status_code=status.HTTP_202_ACCEPTED)
+async def put_usuario(usuario_id: int, usuario: UsuarioGoogleSchemasUp, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(UsuarioGoogleModel).filter(UsuarioGoogleModel.id == usuario_id)
+        result = await session.execute(query)
+        usuarioGoogle_up: UsuarioGoogleModel = result.scalars().unique().one_or_none()
+
+        if usuarioGoogle_up:
+            if usuario.name:
+                usuarioGoogle_up.name = usuario.name
+            if usuario.picture:
+                usuarioGoogle_up.picture = usuario.picture
+            if usuario.email:
+                usuarioGoogle_up.email = usuario.email
+            if usuario.email_verified:
+                usuarioGoogle_up.email_verified = usuario.email_verified
+            if usuario.give_name:
+                usuarioGoogle_up.give_name = usuario.give_name
+            if usuario.family_name:
+                usuarioGoogle_up.family_name = usuario.family_name
+            if usuario.aud:
+                usuarioGoogle_up.aud = usuario.aud
+            if usuario.azp:
+                usuarioGoogle_up.azp = usuario.azp
+            if usuario.exp:
+                usuarioGoogle_up.exp = usuario.exp
+            if usuario.iat:
+                usuarioGoogle_up.iat = usuario.iat
+            if usuario.iss:
+                usuarioGoogle_up.iss = usuario.iss
+            if usuario.jti:
+                usuarioGoogle_up.jti = usuario.jti
+            if usuario.nbf:
+                usuarioGoogle_up.nbf = usuario.nbf
+
+            await session.commit()
+
+            return usuarioGoogle_up
+        else:
+            raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)"""
