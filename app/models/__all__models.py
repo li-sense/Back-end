@@ -8,3 +8,4 @@ from .avaliacao_produtos_models import AvalicaoProdutosModel
 from .image_model import ImagensModel
 from .image_produto_models import Imagens_Product_Model
 from .endereco_models import EnderecoModels
+from .pagamento_cartao_models import PagamentoCartaoModel
