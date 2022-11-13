@@ -6,5 +6,3 @@ from .usuario_google_models import UsuarioGoogleModel
 from .vendedor_models import VendedorModel
 from .image_model import ImagensModel
 from .carrinho_models import CarrinhoModel
-from .item_carrinho_models import ItemCarrinhoModel
-
