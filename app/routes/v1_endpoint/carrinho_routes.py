@@ -12,8 +12,6 @@ from app.models.carrinho_models import CarrinhoModel
 from app.models.usuario_models import UsuarioModel
 from app.models.product_models import ProductModel
 from app.schemas.carrinho_schemas import CarrinhoSchemas
-from app.schemas.vendedor_schemas import VendedorSchemas
-from app.utils.auth_cnpj import consulta_cnpj
 
 
 router = APIRouter()
