@@ -42,13 +42,19 @@ async def get_carrinho(db: AsyncSession = Depends(get_session), logado: UsuarioM
         return carrinho
 
 @router.post("/add/{produto_id}")
-async def add_to_carrinho(produto_id: int, db: AsyncSession = Depends(get_session),):
+async def add_to_carrinho(produto_id: int, db: AsyncSession = Depends(get_session), logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         try:
-            item: CarrinhoModel = CarrinhoModel(produto_id=produto_id, usuario_id=1)
+            query = select(CarrinhoModel).filter(CarrinhoModel.produto_id == produto_id).filter(CarrinhoModel.usuario_id == logado.id)
+        
+            result = await session.execute(query)
+            item: CarrinhoModel = result.scalars().unique().one_or_none()
+            
+            if not item:
+                item: CarrinhoModel = CarrinhoModel(produto_id=produto_id, usuario_id=logado.id)
 
-            session.add(item)
-            await session.commit()
+                session.add(item)
+                await session.commit()
 
             return item
         except IntegrityError:
