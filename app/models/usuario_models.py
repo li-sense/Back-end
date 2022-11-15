@@ -9,10 +9,10 @@ class UsuarioModel(settings.DBBaseModel):
 
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     email: str = Column(String(256), index=True, nullable=False, unique=True)
-    nome: str = Column(String(256))
-    sobrenome: str = Column(String(256))
-    celular: str = Column(String(13))
-    senha: str = Column(String(256))
+    nome: str = Column(String(256), nullable=False)
+    sobrenome: str = Column(String(256), nullable=False)
+    celular: str = Column(String(13), nullable=False)
+    senha: str = Column(String(256), nullable=False)
    
     imagem = relationship("ImagensModel", uselist=False,backref="usuario")
     vendedor = relationship("VendedorModel",  uselist=False, backref="usuario")
