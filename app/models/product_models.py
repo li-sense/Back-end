@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship
 
 from app.config.configs import settings
 from app.models.image_produto_models import ImagensProductModel
+from app.models.historico_compras_usuario_models import HistoricoComprasUsuarioModel
+
 
 class ProductModel(settings.DBBaseModel):
     __tablename__ = "produtos"
@@ -32,3 +34,4 @@ class ProductModel(settings.DBBaseModel):
         lazy="joined"
     )
 
+    historico_compras = relationship("HistoricoComprasUsuarioModel", uselist=False, backref="produtos")
