@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=HistoricoComprasUsuarioSchemas)
-async def criacao_vendedor(historico: HistoricoComprasUsuarioSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
+async def criacao_historico(historico: HistoricoComprasUsuarioSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     novo_historico: HistoricoComprasUsuarioModel = HistoricoComprasUsuarioModel(identificado_usuario=historico.identificado_usuario, preco_produto=historico.preco_produto,
                                                                                 produto_id=historico.produto_id, usuario_id=logado.id)
 
@@ -31,7 +31,7 @@ async def criacao_vendedor(historico: HistoricoComprasUsuarioSchemas, logado: Us
 
 
 @router.get("/", response_model=List[HistoricoComprasUsuarioSchemas])
-async def get_todos_vendedores(db: AsyncSession = Depends(get_session)):
+async def get_todos_historico(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(HistoricoComprasUsuarioModel)
         result = await session.execute(query)
@@ -41,7 +41,7 @@ async def get_todos_vendedores(db: AsyncSession = Depends(get_session)):
 
 
 @router.get("/{historico_id}", response_model=HistoricoComprasUsuarioSchemas, status_code=status.HTTP_200_OK)
-async def get_um_vendedores(historico_id: int, db: AsyncSession = Depends(get_session)):
+async def get_um_historico(historico_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(HistoricoComprasUsuarioModel).filter(HistoricoComprasUsuarioModel.id == historico_id)
         result = await session.execute(query)
