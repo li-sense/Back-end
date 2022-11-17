@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship
 from app.config.configs import settings
 from app.models.image_produto_models import ImagensProductModel
 from app.models.historico_compras_usuario_models import HistoricoComprasUsuarioModel
-from app.models.produtos_avaliados_models import TotalAvaliadosProdutosModel
 
 
 class ProductModel(settings.DBBaseModel):
@@ -36,4 +35,3 @@ class ProductModel(settings.DBBaseModel):
     )
 
     historico_compras = relationship("HistoricoComprasUsuarioModel", uselist=False, backref="produtos")
-    total_produtos_avaliados =  historico_compras = relationship("TotalAvaliadosProdutosModel", uselist=False, backref="produtos")

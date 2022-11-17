@@ -10,7 +10,8 @@ app = FastAPI(title=' API - Li-Sense')
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "http://127.0.0.1:8000/"
+    "http://127.0.0.1:8000/api/v1/",
+    "http://127.0.0.1:8000/api/v1/usuarios/login"
 ]
 
 app.add_middleware(
