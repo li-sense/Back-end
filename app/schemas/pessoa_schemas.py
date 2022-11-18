@@ -2,7 +2,6 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr, HttpUrl
 
 class UsuarioSchemaBase(BaseModel):
-    id: Optional[int] = None
     email: EmailStr
     nome : str
     sobrenome : str

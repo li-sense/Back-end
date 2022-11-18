@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Float, String, Column, ForeignKey
+from sqlalchemy import Integer, Float, String, Column, ForeignKey, Float
 from sqlalchemy.orm import relationship
 
 from app.config.configs import settings

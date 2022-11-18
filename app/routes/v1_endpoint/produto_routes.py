@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, status, Depends, HTTPException, Response
-from fastapi_pagination import paginate, add_pagination, Page
+from fastapi_pagination import paginate, add_pagination, LimitOffsetPage
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -42,7 +42,7 @@ async def create_product(produto: ProductSchema, db: AsyncSession = Depends(get_
                                 detail='Já existe um produto com este nome cadastrado.')
 
 
-@router.get('/produtos', response_model=Page[ProductSchema])
+@router.get('/produtos', response_model=LimitOffsetPage[ProductSchema])
 async def get_products_paginate(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ProductModel)
