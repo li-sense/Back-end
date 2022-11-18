@@ -7,7 +7,26 @@ from jose import jwt
 import emails
 from emails.template import JinjaTemplate
 
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from dotenv import dotenv_values
+
 from app.config.configs import settings
+
+
+config_credentials_email = dotenv_values(".env")
+
+conf = ConnectionConfig(
+    MAIL_USERNAME = config_credentials_email["EMAIL"],
+    MAIL_PASSWORD = config_credentials_email["PASS"],
+    MAIL_FROM = config_credentials_email["EMAIL"],
+    MAIL_PORT = 465,
+    MAIL_SERVER = "smtp.gmail.com",
+    MAIL_STARTTLS = False,
+    MAIL_SSL_TLS = True,
+    USE_CREDENTIALS = True,
+    VALIDATE_CERTS = True
+)
+
 
 def send_email(email_to: str,subject_template: str = "",html_template: str = "",environment: Dict[str, Any] = {},) -> None:
     assert settings.EMAILS_ENABLED
@@ -66,8 +85,9 @@ def generate_password_reset_token(email: str) -> str:
     return encoded_jwt
 
 def verify_password_reset_token(token: str) -> Optional[str]:
+
     try:
         decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM])
-        return decoded_token["email"]
+        return decoded_token["email"]  
     except jwt.JWTError:
         return None
