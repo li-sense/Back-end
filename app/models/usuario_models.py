@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 from app.models.image_model import ImagensModel
 from app.config.configs import settings
 
+from app.models.historico_compras_usuario_models import HistoricoComprasUsuarioModel
+
 class UsuarioModel(settings.DBBaseModel):
     __tablename__ = "usuario"
 
@@ -19,6 +21,14 @@ class UsuarioModel(settings.DBBaseModel):
     
     avaliacao_usuario = relationship(
         "AvalicaoProdutosModel",
+        cascade="all,delete-orphan",
+        back_populates="usuario_criado",
+        uselist=True,
+        lazy="joined"
+    )
+
+    historico_compras = relationship(
+        "HistoricoComprasUsuarioModel",
         cascade="all,delete-orphan",
         back_populates="usuario_criado",
         uselist=True,
