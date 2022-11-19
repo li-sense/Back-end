@@ -14,6 +14,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.models.usuario_models import UsuarioModel
 from app.models.image_model import ImagensModel
+from app.schemas.image_schemas import Imagem
 from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
 from app.models.usuario_google_models import UsuarioGoogleModel
 from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas
@@ -28,8 +29,7 @@ router = APIRouter()
 router.mount("/static", StaticFiles(directory="static"),name = "static")
 
 @router.post("/uploadfile/profile")
-async def create_upload_file(file: UploadFile = File(...), 
-                                user : UsuarioModel= Depends(get_current_user),db: AsyncSession = Depends(get_session)):
+async def create_upload_file(file: UploadFile = File(...), user : UsuarioModel= Depends(get_current_user),db: AsyncSession = Depends(get_session)):
     FILEPATH = "./static/images/"
     filename = file.filename
     extension = filename.split(".")[1]
@@ -59,3 +59,42 @@ async def create_upload_file(file: UploadFile = File(...),
     await db.commit()
 
     return {"status":"ok","filename":file_url}
+
+@router.get("/uploadfile/profile/{image_id}", response_model=Imagem, status_code=status.HTTP_200_OK)
+async def get_image(image_id: int, db: AsyncSession = Depends(get_session)):
+    async with db as session:
+        query = select(ImagensModel).filter(ImagensModel.id == image_id)
+        result = await session.execute(query)
+        image: ImagensModel = result.scalars().unique().one_or_none()
+
+        if image:
+            return image
+        else:
+            raise HTTPException(detail='Imagem não encontrada!', status_code=status.HTTP_404_NOT_FOUND)     
+
+@router.get("/uploadfile/profile/images", response_model=List[Imagem])
+async def get_imagens(db: AsyncSession = Depends(get_session())):
+    async with db as session:
+        query = select(ImagensModel)
+        result = await session.execute(query)
+        images: List[Imagem] = result.scalars().unique().all()
+
+        return images
+
+
+@router.delete("/uploadfile/profile/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_image(image_id: int,db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
+    async with db as session:
+        query = select(ImagensModel).filter(ImagensModel.id == image_id).filter(ImagensModel.id_usuario == usuario_logado.id)
+
+        result = await session.execute(query)
+        image_del: ImagensModel = result.scalars().unique().one_or_none()
+
+        if image_del:
+            await session.delete(image_del)
+            await session.commit()
+
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
