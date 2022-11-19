@@ -10,4 +10,5 @@
 
 DELETE from produtos WHERE id=3;
 
--- SELECT * FROM produtos
+SELECT * FROM produtos
+

@@ -4,7 +4,7 @@ from .v1_endpoint import (avaliacao_produtos_routes, certificate_routes,
                           endereco_usuario_routes,
                           historico_compras_usuario_routes,
                           imagem_usuario_routes, produto_routes,
-                          usuario_routes, vendedor_routes)
+                          usuario_routes, vendedor_routes, carrinho_routes)
 
 api_router = APIRouter()
 
