@@ -176,20 +176,4 @@ async def create_upload_file(id: int,file: UploadFile = File(...),
     file_url = "localhost:8000" + generated_name[1:]
     return {"status":"ok","filename":file_url}
     
-@router.post("/buy/{product_id}")
-async def buy_product_by_ticket(product_id : int, qty: int, db: AsyncSession = Depends(get_session)):
-
-    async with db as session:
-        query = select(ProductModel).filter(ProductModel.id == product_id)
-        result = await session.execute(query)
-        currentProduct: ProductModel = result.scalars().unique().one_or_none()
-
-        valorTotal = qty*currentProduct.preco
-        if valorTotal >= 4: #Minimo que se pode pagar em boleto é 4 reais
-            payment_Url =  payment(currentProduct, qty)
-            return payment_Url
-        else:
-            raise HTTPException(detail='Preço insuficiente para pagamento em boleto',
-                                status_code=status.HTTP_400_BAD_REQUEST)
-
 """
