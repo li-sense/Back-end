@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from .v1_endpoint import (avaliacao_produtos_routes, certificate_routes,
