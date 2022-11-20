@@ -14,7 +14,7 @@ def payment(product: ProductModel, qty : int):
                 "title": product.nome,
                 "quantity": qty,
                 "currency_id": "BRL",
-                "unit_price": float(product.preco)
+                "unit_price": product.preco
             }
         ],
         "payment_methods": {
@@ -43,6 +43,6 @@ def payment(product: ProductModel, qty : int):
     }
 
     preference_response = sdk.preference().create(preference_data)
-    preference = preference_response["response"]
+    preference = preference_response["response"]["init_point"]
 
     return preference
