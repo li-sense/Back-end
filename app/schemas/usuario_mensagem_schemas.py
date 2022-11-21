@@ -1,5 +1,9 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel, EmailStr
+from typing import List
 
 class MensagemSchemas(BaseModel):
-    msg: str
+   email: List[EmailStr]
+
+
+class VerificaTokenSchemas(BaseModel):
+    password: str
