@@ -18,7 +18,8 @@ class UsuarioModel(settings.DBBaseModel):
    
     imagem = relationship("ImagensModel", uselist=False,backref="usuario")
     vendedor = relationship("VendedorModel",  uselist=False, backref="usuario")
-    
+    endereco = relationship("EnderecoModels",  uselist=False, backref="usuario")
+     
     avaliacao_usuario = relationship(
         "AvalicaoProdutosModel",
         cascade="all,delete-orphan",
