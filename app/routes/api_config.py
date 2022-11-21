@@ -5,7 +5,7 @@ from .v1_endpoint import (avaliacao_produtos_routes, certificate_routes,
                           historico_compras_usuario_routes,
                           imagem_usuario_routes, produto_routes,
                           usuario_routes, vendedor_routes, carrinho_routes,
-                          pagamento_bol_routes)
+                          pagamento_bol_routes,imagem_produtos_routes)
 
 api_router = APIRouter()
 
@@ -20,4 +20,5 @@ api_router.include_router(vendedor_routes.router, prefix='/vendedor', tags=['ven
 api_router.include_router(carrinho_routes.router, prefix='/carrinho', tags=['carrinho'])
 api_router.include_router(historico_compras_usuario_routes.router, prefix='/historico-compras-usuario', tags=['historico-compras-usuario'])
 api_router.include_router(pagamento_bol_routes.router, prefix='/pagamento-boleto', tags=['pagamento-boleto'])
+api_router.include_router(imagem_produtos_routes.router, prefix='/imagens-icon-produtos', tags=['imagens-icon-produtos'])
 
