@@ -9,5 +9,6 @@ from .image_model import ImagensModel
 from .carrinho_models import CarrinhoModel
 from .image_produto_models import ImagensProductModel
 from .endereco_models import EnderecoModels
+from .licenca_models import LicencaModel
 
 from .historico_compras_usuario_models import HistoricoComprasUsuarioModel
