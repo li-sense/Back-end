@@ -64,8 +64,8 @@ async def get_image(image_id: int, db: AsyncSession = Depends(get_session)):
         else:
             raise HTTPException(detail='Imagem não encontrada!', status_code=status.HTTP_404_NOT_FOUND)     
 
-@router.get("/uploadfile/profile/images", response_model=List[Imagem])
-async def get_images(db: AsyncSession = Depends(get_session())):
+@router.get("/uploadfile/profile/images", response_model=List[Imagem], status_code=status.HTTP_200_OK)
+async def get_images(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ImagensModel)
         result = await session.execute(query)
