@@ -23,5 +23,18 @@ class UsuarioGoogleSchemas(BaseModel):
         orm_mode = True
         
 
-    
-   
+class UsuarioGoogleSchemasUp(UsuarioGoogleSchemas):
+    sub:  Optional[str] 
+    email: Optional[EmailStr] 
+    picture: Optional[str] 
+    aud: Optional[str] 
+    azp: Optional[str] 
+    email_verified: Optional[bool]
+    exp: Optional[int]
+    family_name: Optional[str] 
+    give_name: Optional[str] 
+    iat: Optional[int] 
+    iss: Optional[str] 
+    jti: Optional[str] 
+    name: Optional[str] 
+    nbf: Optional[str]    
