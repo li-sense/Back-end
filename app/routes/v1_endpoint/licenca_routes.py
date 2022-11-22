@@ -53,7 +53,7 @@ async def get_licencas(db: AsyncSession = Depends(get_session)):
 add_pagination(router)
 
 @router.get('/licenca-id/{licenca_id}', response_model=LicencaSchema, status_code=status.HTTP_200_OK)
-async def get_licenca_id(licenca_id: str, db: AsyncSession = Depends(get_session)):
+async def get_licenca_id(licenca_id: int, db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(LicencaModel).filter(LicencaModel.id == licenca_id)
         result = await session.execute(query)

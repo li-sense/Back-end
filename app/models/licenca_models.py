@@ -9,5 +9,3 @@ class LicencaModel(settings.DBBaseModel):
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     validade: float = Column(Float, nullable=False)
     quantidade: int = Column(Integer, nullable=False)
-
-    vendedor = relationship("VendedorModel", back_populates='licencas', lazy='joined')
