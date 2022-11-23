@@ -15,9 +15,7 @@ from app.schemas.historico_compras_usuario_schemas import HistoricoComprasUsuari
 from app.utils.payment_by_bankSlip import payment
 
 
-
 router = APIRouter()
-
 
 
 @router.post("/{product_id}")

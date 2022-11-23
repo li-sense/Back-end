@@ -43,6 +43,6 @@ def payment(product: ProductModel, qty : int):
     }
 
     preference_response = sdk.preference().create(preference_data)
-    preference = preference_response["response"]
+    preference = preference_response["response"]["init_point"]
 
     return preference
