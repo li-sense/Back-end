@@ -28,6 +28,14 @@ class UsuarioModel(settings.DBBaseModel):
         lazy="joined"
     )
 
+    pagamento_cartao_usuario = relationship(
+        "PagamentoCartaoModel",
+        cascade="all,delete-orphan",
+        back_populates="usuario_criado",
+        uselist=True,
+        lazy="joined"
+    )
+    
     historico_compras = relationship(
         "HistoricoComprasUsuarioModel",
         cascade="all,delete-orphan",
