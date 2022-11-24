@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .v1_endpoint import (avaliacao_produtos_routes, certificate_routes,
+from .v1_endpoint import (avaliacao_produtos_routes, certificate_email,
                           endereco_usuario_routes,
                           historico_compras_usuario_routes,
                           imagem_usuario_routes, produto_routes,
