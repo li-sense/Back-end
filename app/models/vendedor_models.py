@@ -10,6 +10,7 @@ class VendedorModel(settings.DBBaseModel):
     
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     identificado: str = Column(String(14), index=True, nullable=False, unique=True)
+    nome: str = Column(String(240), index=True, nullable=False, unique=True)
     
     produtos = relationship(
         "ProductModel",

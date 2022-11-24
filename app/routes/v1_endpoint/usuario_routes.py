@@ -3,7 +3,6 @@ from typing import List, Optional, Any
 from fastapi import APIRouter, status, Depends, HTTPException, Response, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -49,8 +48,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     usuario = await autenticar(email=form_data.username, senha=form_data.password, db=db)
 
     if not usuario:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='Dados de acesso incorretos.')
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Dados de acesso incorretos.')
 
     return JSONResponse(content={"access_token": criar_token_acesso(sub=usuario.id), 
                         "token_type": "bearer"}, status_code=status.HTTP_200_OK)
