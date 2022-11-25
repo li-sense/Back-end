@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
+from app.config.configs import settings
 
 
 class PagamentoCartaoModel(settings.DBBaseModel):
