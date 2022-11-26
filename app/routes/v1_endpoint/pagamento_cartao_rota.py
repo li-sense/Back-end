@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from app.config.deps import get_session, get_current_user
 from app.models.usuario_models import PagamentoCartaoModel
 from app.models.pagamento_cartao_models import PagamentoCartaoModel 
+from app.models.usuario_models import UsuarioModel
 from app.schemas.pagamento_cartao_schemas import PagamentoCartaoSchemas
 from app.utils.pagamento_cartao import pagamento_cartao
 
