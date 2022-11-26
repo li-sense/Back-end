@@ -8,5 +8,6 @@ class EnderecoModels(settings.DBBaseModel):
     rua: str = Column(String(256), nullable=False)
     numero: int = Column(Integer, nullable=False)
     bairro: str = Column(String(256), nullable=False)
-    cep: str = Column(String(256), nullable=False)
-    email_usuario: str = Column(String(256), ForeignKey("usuario.email"))
+    cep: str = Column(String(8), nullable=False)
+
+    usuario_id = Column(Integer, ForeignKey("usuario.id"))

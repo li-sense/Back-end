@@ -14,6 +14,6 @@ RUN pip freeze > requirements.txt
 
 COPY . .
 
-EXPOSE 2000
+EXPOSE 8000
 
 CMD ["python", "main.py"]
