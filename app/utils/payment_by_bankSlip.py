@@ -1,8 +1,11 @@
 from app.models.product_models import ProductModel
+from app.config.configs import settings
 import mercadopago
 
-PROD_ACCESS_TOKEN = "TEST-3941014498051831-110415-dbb22880781417cb7eddffcd41a15cde-1231850157" #Teste
-#PROD_ACCESS_TOKEN = "APP_USR-3941014498051831-110415-6e89de264be0e9e1020f0dee152d101c-1231850157" #Produção
+
+PROD_ACCESS_TOKEN = settings.MERCADOPAGO_ACCESS_TOKEN_TEST
+
+#PROD_ACCESS_TOKEN = settings.MERCADOPAGO_ACCESS_TOKEN_PROD
 
 sdk = mercadopago.SDK(PROD_ACCESS_TOKEN)
 
@@ -14,7 +17,7 @@ def payment(product: ProductModel, qty : int):
                 "title": product.nome,
                 "quantity": qty,
                 "currency_id": "BRL",
-                "unit_price": product.preco
+                "unit_price": float(product.preco)
             }
         ],
         "payment_methods": {
