@@ -5,6 +5,7 @@ from app.models.image_model import ImagensModel
 from app.config.configs import settings
 
 from app.models.historico_compras_usuario_models import HistoricoComprasUsuarioModel
+from app.models.pagamento_cartao_models import PagamentoCartaoModel
 
 class UsuarioModel(settings.DBBaseModel):
     __tablename__ = "usuario"
@@ -19,6 +20,7 @@ class UsuarioModel(settings.DBBaseModel):
     imagem = relationship("ImagensModel", uselist=False,backref="usuario")
     vendedor = relationship("VendedorModel",  uselist=False, backref="usuario")
     endereco = relationship("EnderecoModels",  uselist=False, backref="usuario")
+    
      
     avaliacao_usuario = relationship(
         "AvalicaoProdutosModel",

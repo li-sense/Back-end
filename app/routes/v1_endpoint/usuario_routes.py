@@ -1,6 +1,7 @@
 from typing import List, Optional, Any
 
 from fastapi import APIRouter, status, Depends, HTTPException, Response, Body
+from fastapi_mail import FastMail, MessageSchema, MessageType
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 
@@ -15,8 +16,9 @@ from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas, UsuarioGoog
 from app.config.deps import get_session, get_current_user
 from app.config.security import gerar_hash_senha
 from app.config.auth import autenticar, criar_token_acesso, autentica_google
-from app.schemas.usuario_mensagem_schemas import MensagemSchemas
-from app.utils.email_config import generate_password_reset_token, verify_password_reset_token, send_reset_password_email
+from app.config.configs import settings
+from app.schemas.usuario_mensagem_schemas import MensagemSchemas, VerificaTokenSchemas
+from app.utils.recuperacao_email_config import generate_password_reset_token, verify_password_reset_token
 
 
 router = APIRouter()
@@ -122,42 +124,58 @@ async def delete_usuario(usuario_id: int, db: AsyncSession = Depends(get_session
         else:
             raise HTTPException(detail='Usuário não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
-@router.post('/recuperacao-senha/{email}', response_model=MensagemSchemas)
-async def recuperacao_senha(email: str, db: AsyncSession = Depends(get_session)):
+
+@router.post('/recuperacao-senha', response_model=MensagemSchemas)
+async def recuperacao_senha(email: MensagemSchemas, db: AsyncSession = Depends(get_session)):
+
     async with db as session:
-        query = select(UsuarioModel).filter(UsuarioModel.email == email)
+        query = select(UsuarioModel).filter(UsuarioModel.email == email.email[0])
         result = await session.execute(query)
         usuario: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
         if usuario:
-            reset = generate_password_reset_token(email=email)
+            token_email: str = email.email[0]
+            reset_token = generate_password_reset_token(email=token_email)
 
-            send_reset_password_email(
-                email_to=usuario.email, email=email, token=reset
-            )
+            html = f"<p>Link: http://localhost:9000/recovery/{reset_token}</p>"
 
-            return {"msg": "Password recovery email sent"}
+            email_message = MessageSchema(
+                subject="Recuperação de Senha",
+                recipients=email.dict().get("email"),
+                body=html,
+                subtype=MessageType.html
+                )
+
+            send_email = FastMail(settings.CONFIG_SEND_EMAIL)
+            await send_email.send_message(email_message)
+            return JSONResponse(status_code=200, content={"message": "email has been sent"})
         else:
             raise HTTPException(detail='Usuário não encontrado.',
                                 status_code=status.HTTP_404_NOT_FOUND)
 
 
-@router.post('/redefinir-senha', response_model=MensagemSchemas)
-async def redefinir_senha(token: str = Body(...), new_password: str = Body(...), db: AsyncSession = Depends(get_session)):
+@router.put('/redefinir-senha/{token_id}', status_code=status.HTTP_201_CREATED, response_model=VerificaTokenSchemas)
+async def redefinir_senha(token_id:str , token_verificao: VerificaTokenSchemas, db: AsyncSession = Depends(get_session)):
+    
     async with db as session:
 
-        email = verify_password_reset_token(token)
+        email: str = verify_password_reset_token(token=token_id)
+        
 
         if not email:
-            raise HTTPException(detail='Usuário não encontrado.',
-                                status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(detail='Email Invalido', status_code=status.HTTP_404_NOT_FOUND)
 
         query = select(UsuarioModel).filter(UsuarioModel.email == email)
         result = await session.execute(query)
-        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+        usuario_up: UsuarioModel = result.scalars().unique().one_or_none()
+
 
         if usuario_up:
-            usuario_up.senha = gerar_hash_senha(new_password)
+
+            if token_verificao.password_send != token_verificao.confim_password:
+                raise HTTPException(detail='Senha Incorreta', status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+            usuario_up.senha = gerar_hash_senha(token_verificao.password_send)
 
             await session.commit()
 

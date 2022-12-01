@@ -15,6 +15,6 @@ class PagamentoCartaoModel(settings.DBBaseModel):
     email: str = Column(String(256))
     number: str = Column(String(13))
     usuario_id = Column(Integer, ForeignKey('usuario.id'))
-    usuario_criado = relationship("UsuarioModel", back_populates='avaliacao_usuario', lazy='joined')
+    usuario_criado = relationship("UsuarioModel", back_populates='pagamento_cartao_usuario', lazy='joined')
 
     
