@@ -11,7 +11,8 @@ origins = [
     "http://localhost",
     "http://localhost:8000",
     "http://127.0.0.1:8000/api/v1/",
-    "http://127.0.0.1:8000/api/v1/usuarios/login"
+    "http://127.0.0.1:8000/api/v1/usuarios/login",
+    "https://dev.li-sense.xyz/docs"
 ]
 
 app.add_middleware(
