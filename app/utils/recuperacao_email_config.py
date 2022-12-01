@@ -1,26 +1,41 @@
-from typing import Optional
 from datetime import datetime, timedelta
+from pytz import timezone
 from jose import jwt
 
 from app.config.configs import settings
 
 
-def generate_password_reset_token(email: str) -> str:
-    delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
-    now = datetime.utcnow()
-    expires = now + delta
-    exp = expires.timestamp()
+def generate_password_reset_token(email: str):
+    payload = {}
+    tempo_vida = timedelta(minutes=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
 
-    encoded_jwt = jwt.encode(
-        {"exp": exp, "nbf": now, "sub": email}, settings.JWT_SECRET, algorithm=settings.ALGORITHM
-    )
+    sp = timezone('America/Sao_Paulo')
+    expira = datetime.now(tz=sp) + tempo_vida
+    tipo_token = "access_token"
 
-    return encoded_jwt
+    payload["type"] = tipo_token
+    payload["exp"] = expira
+    payload["iat"] = datetime.now(tz=sp)
+    payload["sub"] = str(email)
 
-def verify_password_reset_token(token: str) -> Optional[str]:
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.ALGORITHM)
+
+
+def verify_password_reset_token(token: str):
 
     try:
-        decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=settings.ALGORITHM)
-        return decoded_token["email"]
+        decoded_token = jwt.decode(
+            token, 
+            settings.JWT_SECRET, 
+            algorithms=[settings.ALGORITHM], 
+            options={"verify_aud": False}
+        )
+
+        email = decoded_token.get("sub")
+        
+        return email
+        
     except jwt.JWTError:
         return None
+
+

@@ -134,9 +134,10 @@ async def recuperacao_senha(email: MensagemSchemas, db: AsyncSession = Depends(g
         usuario: UsuarioSchemaBase = result.scalars().unique().one_or_none()
 
         if usuario:
-            reset_token = generate_password_reset_token(email=email.email)
+            token_email: str = email.email[0]
+            reset_token = generate_password_reset_token(email=token_email)
 
-            html = f"<p>Token: {reset_token}</p>"
+            html = f"<p>Link: http://localhost:9000/recovery/{reset_token}</p>"
 
             email_message = MessageSchema(
                 subject="Recuperação de Senha",
@@ -154,25 +155,31 @@ async def recuperacao_senha(email: MensagemSchemas, db: AsyncSession = Depends(g
 
 
 @router.put('/redefinir-senha/{token_id}', status_code=status.HTTP_201_CREATED, response_model=VerificaTokenSchemas)
-async def redefinir_senha(token_id:str, token_verificao: VerificaTokenSchemas, db: AsyncSession = Depends(get_session)):
+async def redefinir_senha(token_id:str , token_verificao: VerificaTokenSchemas, db: AsyncSession = Depends(get_session)):
+    
     async with db as session:
 
-        email = verify_password_reset_token(token_id)
+        email: str = verify_password_reset_token(token=token_id)
+        
 
         if not email:
-            raise HTTPException(detail='Usuário não encontrado 1.', status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(detail='Email Invalido', status_code=status.HTTP_404_NOT_FOUND)
 
         query = select(UsuarioModel).filter(UsuarioModel.email == email)
         result = await session.execute(query)
-        usuario_up: UsuarioSchemaBase = result.scalars().unique().one_or_none()
+        usuario_up: UsuarioModel = result.scalars().unique().one_or_none()
+
 
         if usuario_up:
-            usuario_up.senha = gerar_hash_senha(token_verificao.password)
+
+            if token_verificao.password_send != token_verificao.confim_password:
+                raise HTTPException(detail='Senha Incorreta', status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+            usuario_up.senha = gerar_hash_senha(token_verificao.password_send)
 
             await session.commit()
 
             return usuario_up
-            
         else:
             raise HTTPException(detail='Usuário não encontrado.',
                                 status_code=status.HTTP_404_NOT_FOUND)
