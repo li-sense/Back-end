@@ -23,8 +23,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
 
-    #Email
-    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    #Fastapi Email
+
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 60 * 24
 
     CONFIG_SEND_EMAIL = ConnectionConfig(
         MAIL_USERNAME = config_env["EMAIL"],
