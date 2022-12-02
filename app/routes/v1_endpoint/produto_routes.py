@@ -31,7 +31,7 @@ async def create_product(produto: ProductSchema, db: AsyncSession = Depends(get_
 
 
             novo_produto: ProductModel = ProductModel(nome=produto.nome, descricao=produto.descricao, preco=produto.preco, 
-                                                    detalhes=produto.detalhes, vendedor_id=vendedor_id.id)
+                                                    categoria=produto.categoria, vendedor_id=vendedor_id.id)
 
             session.add(novo_produto)
             await session.commit()
@@ -104,8 +104,8 @@ async def put_product(product_id: int, product: ProductSchema, db: AsyncSession 
             if product.preco:
                 product_up.preco = product.preco
             
-            if product.detalhes:
-                product_up.detalhes = product.detalhes
+            if product.categoria:
+                product_up.categoria = product.categoria
 
             await session.commit()
  
