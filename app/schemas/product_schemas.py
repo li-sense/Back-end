@@ -5,7 +5,7 @@ class ProductSchema(BaseModel):
     nome: str
     descricao: str
     preco: str
-    detalhes: str
+    categoria: str
     
 
     class Config:
