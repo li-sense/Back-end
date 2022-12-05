@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models.usuario_models import UsuarioModel
 from app.models.product_models import ProductModel
 from app.models.vendedor_models import VendedorModel
-from app.schemas.product_schemas import ProductSchema
+from app.schemas.product_schemas import ProductSchema, ProdutoIdSchemas
 from app.config.deps import get_session, get_current_user
 
 
@@ -42,7 +42,7 @@ async def create_product(produto: ProductSchema, db: AsyncSession = Depends(get_
                                 detail='Já existe um produto com este nome cadastrado.')
 
 
-@router.get('/produtos', response_model=LimitOffsetPage[ProductSchema])
+@router.get('/produtos', response_model=LimitOffsetPage[ProdutoIdSchemas])
 async def get_products_paginate(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(ProductModel)

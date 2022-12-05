@@ -10,4 +10,6 @@ class ProductSchema(BaseModel):
 
     class Config:
         orm_mode = True
-
+        
+class ProdutoIdSchemas(ProductSchema):
+    id: Optional[int] = None
