@@ -1,5 +1,4 @@
 from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -14,5 +13,7 @@ class PagamentoCartaoSchemas(BaseModel):
     number: str 
     usuario_id: Optional[int]
 
+
     class Config:
         orm_mode = True
+

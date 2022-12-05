@@ -17,4 +17,3 @@ class PagamentoCartaoModel(settings.DBBaseModel):
     usuario_id = Column(Integer, ForeignKey('usuario.id'))
     usuario_criado = relationship("UsuarioModel", back_populates='pagamento_cartao_usuario', lazy='joined')
 
-    
