@@ -21,6 +21,7 @@ def payment(product: ProductModel, qty : int):
             }
         ],
         "payment_methods": {
+            "default_payment_method_id" : "bolbradesco",
             "excluded_payment_methods": [
                 { "id": "elo" },
                 { "id": "master"},
@@ -34,18 +35,11 @@ def payment(product: ProductModel, qty : int):
                 { "id":"atm"},
                 { "id":"credit_card"},
                 { "id":"debit_card"}
-            ],
-            "default_payment_method_id" : "bolbradesco"
+            ]
         }
-        # "back_urls": {
-        #     "success": "",
-        #     "failure": "",
-        #     "pending": ""
-        # },
-        # "auto_return": "approved"
     }
 
     preference_response = sdk.preference().create(preference_data)
-    preference = preference_response["response"]["init_point"]
+    preference = preference_response["response"]
 
     return preference
