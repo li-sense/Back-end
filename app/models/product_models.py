@@ -34,4 +34,12 @@ class ProductModel(settings.DBBaseModel):
         lazy="joined"
     )
 
+    licenca = relationship(
+        "LicencaModel",
+        cascade="all,delete-orphan",
+        back_populates="produto",
+        uselist=True,
+        lazy="joined"
+    )
+
     historico_compras = relationship("HistoricoComprasUsuarioModel", uselist=False, backref="produtos")
