@@ -10,7 +10,7 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import IntegrityError
 
 from app.models.usuario_models import UsuarioModel
-from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp
+from app.schemas.pessoa_schemas import UsuarioSchemaBase, UsuarioSchemaCreate, UsuarioSchemaUp, UsuarioIdSchemas
 from app.models.usuario_google_models import UsuarioGoogleModel
 from app.schemas.usuario_google_schemas import UsuarioGoogleSchemas, UsuarioGoogleSchemasUp
 from app.config.deps import get_session, get_current_user
@@ -57,7 +57,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
 
 
-@router.get('/', response_model=List[UsuarioSchemaBase])
+@router.get('/', response_model=List[UsuarioIdSchemas])
 async def get_usuarios(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(UsuarioModel)

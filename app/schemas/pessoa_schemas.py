@@ -21,3 +21,7 @@ class UsuarioSchemaUp(UsuarioSchemaBase):
     nome : Optional[str]
     sobrenome : Optional[str]
     celular : Optional[str]
+
+
+class UsuarioIdSchemas(UsuarioSchemaBase):
+    id: Optional[int] = None

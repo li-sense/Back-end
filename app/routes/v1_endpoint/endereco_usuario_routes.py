@@ -7,7 +7,7 @@ from typing import List
 
 from app.models.endereco_models import EnderecoModels
 from app.models.usuario_models import UsuarioModel
-from app.schemas.endereco_schemas import EnderecoSchema
+from app.schemas.endereco_schemas import EnderecoSchema, EnderecoIdSchemas
 
 from app.config.deps import get_session, get_current_user
 
@@ -29,7 +29,7 @@ async def cria_endereco(endereco: EnderecoSchema, db: AsyncSession = Depends(get
             raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Não foi possível cadastrar este endereço!')
 
 
-@router.get('/enderecos', response_model=List[EnderecoSchema])
+@router.get('/enderecos', response_model=List[EnderecoIdSchemas])
 async def get_enderecos(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(EnderecoModels)
@@ -40,7 +40,8 @@ async def get_enderecos(db: AsyncSession = Depends(get_session)):
 
 
 @router.get('/{endereco_id}', response_model=EnderecoSchema, status_code=status.HTTP_200_OK)
-async def get_endereco(endereco_id: str, db: AsyncSession = Depends(get_session)):
+async def get_endereco(endereco_id: int, db: AsyncSession = Depends(get_session)):
+
     async with db as session:
         query = select(EnderecoModels).filter(EnderecoModels.id == endereco_id)
         result = await session.execute(query)
@@ -55,7 +56,7 @@ async def get_endereco(endereco_id: str, db: AsyncSession = Depends(get_session)
 @router.put("/{endereco_id}", response_model=EnderecoSchema, status_code=status.HTTP_202_ACCEPTED)
 async def put_endereco(endereco_id: int, endereco: EnderecoSchema, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
-        query = select(EnderecoModels).filter(EnderecoModels.id == endereco_id)
+        query = select(EnderecoModels).filter(EnderecoModels.id == endereco_id).filter(EnderecoModels.usuario_id == logado.id)
         result = await session.execute(query)
         endereco_up: EnderecoModels = result.scalars().unique().one_or_none()
 
