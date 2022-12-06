@@ -1,4 +1,4 @@
-from reportlab.lib.units import mm, inch
+from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas 
 
 
@@ -20,6 +20,4 @@ class CriacaoDoCertificado():
         cnv.setFont('Helvetica', 26 )
         cnv.drawString(80, 300, "A empresa Li-Sense afirma por meio deste documento que o")
         cnv.drawString(80, 270,  "usuário(a)tem direito de posse da licença desse produto.")
-
-        pdf = cnv.save()
-        return pdf
+        return cnv
