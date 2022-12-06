@@ -10,7 +10,7 @@ from app.config.deps import get_session, get_current_user
 from app.models.usuario_models import UsuarioModel
 from app.models.product_models import ProductModel
 from app.models.historico_compras_usuario_models import HistoricoComprasUsuarioModel
-from app.schemas.historico_compras_usuario_schemas import HistoricoComprasUsuarioSchemas
+from app.schemas.historico_compras_usuario_schemas import HistoricoComprasUsuarioSchemas, HistoricoComprasUsuarioIdSchemas
 
 
 router = APIRouter()
@@ -39,7 +39,7 @@ async def criacao_historico(historico: HistoricoComprasUsuarioSchemas, logado: U
             raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail='Já existe o  historico desse usuario.')
 
 
-@router.get("/", response_model=List[HistoricoComprasUsuarioSchemas])
+@router.get("/", response_model=List[HistoricoComprasUsuarioIdSchemas])
 async def get_todos_historico(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(HistoricoComprasUsuarioModel)
