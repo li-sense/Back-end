@@ -4,7 +4,6 @@ from dotenv import dotenv_values
 from starlette.responses import JSONResponse
 
 from app.schemas.certificado_schemas import EmailSchema
-from app.utils.create_certification import CriacaoDoCertificado
 
 router = APIRouter()
 
@@ -22,13 +21,15 @@ conf = ConnectionConfig(
     VALIDATE_CERTS = True
 )
 
+txt = """<p>Por este email confirmamos a compra desta lincesa</p> """
+
 @router.post("/email")
 async def post_email(email: EmailSchema) -> JSONResponse:
 
     message = MessageSchema(
-        subject="Fastapi-Mail module",
+        subject="Email de Confirmação Li-Sense",
         recipients=email.dict().get("email"),
-        body=CriacaoDoCertificado.createPDF(),
+        body=txt,
         subtype=MessageType.html)
 
     fm = FastMail(conf)
