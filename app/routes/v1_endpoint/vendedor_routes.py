@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from app.config.deps import get_session, get_current_user
 from app.models.usuario_models import UsuarioModel
 from app.models.vendedor_models import VendedorModel
-from app.schemas.vendedor_schemas import VendedorSchemas
+from app.schemas.vendedor_schemas import VendedorSchemas, VendedorIdSchemas
 from app.utils.auth_cnpj import consulta_cnpj
 
 
@@ -31,7 +31,7 @@ async def criacao_vendedor(vendedor: VendedorSchemas, logado: UsuarioModel = Dep
                                 detail='Já existe o usuario vendedor.')
 
 
-@router.get("/", response_model=List[VendedorSchemas])
+@router.get("/", response_model=List[VendedorIdSchemas])
 async def get_todos_vendedores(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(VendedorModel)
@@ -57,7 +57,7 @@ async def get_um_vendedores(vendedor_id: int, db: AsyncSession = Depends(get_ses
 @router.put("/{vendedor_id}", response_model=VendedorSchemas, status_code=status.HTTP_202_ACCEPTED)
 async def put_vendedores(vendedor_id: int, vendedor: VendedorSchemas, logado: UsuarioModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
-        query = select(VendedorModel).filter(VendedorModel.id == vendedor_id)
+        query = select(VendedorModel).filter(VendedorModel.id == vendedor_id).filter(VendedorModel.usuario_id == logado.id)
         result = await session.execute(query)
         vendedor_up: VendedorModel = result.scalars().unique().one_or_none()
 
@@ -67,9 +67,6 @@ async def put_vendedores(vendedor_id: int, vendedor: VendedorSchemas, logado: Us
             
             if vendedor.nome:
                 vendedor_up.nome = vendedor.nome
-
-            if logado.id != vendedor.usuario_id:
-                vendedor_up.usuario_id = logado.id
 
             await session.commit()
 

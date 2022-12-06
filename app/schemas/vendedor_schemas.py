@@ -9,3 +9,6 @@ class VendedorSchemas(BaseModel):
 
     class Config:
         orm_mode = True
+
+class VendedorIdSchemas(VendedorSchemas):
+    id: Optional[int] = None
