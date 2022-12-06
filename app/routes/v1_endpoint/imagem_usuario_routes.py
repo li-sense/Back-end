@@ -16,8 +16,6 @@ from app.config.deps import get_session, get_current_user
 
 router = APIRouter()
 
-#static file setup config
-
 router.mount("/static", StaticFiles(directory="static"),name = "static")
 
 @router.post("/uploadfile/profile")
@@ -27,7 +25,7 @@ async def create_upload_file(file: UploadFile = File(...), user : UsuarioModel= 
     extension = filename.split(".")[1]
 
     if extension not in ["png","jpg"]:
-        return {"status" : "error","detail":"file extension note allowed"}
+        return {"status" : "error","detail":"Extensão do arquivo não permitida!"}
     
     token_name = secrets.token_hex(10) + "." + extension
     generated_name = FILEPATH + token_name
@@ -62,7 +60,7 @@ async def get_image(image_id: int, db: AsyncSession = Depends(get_session)):
         if image:
             return image
         else:
-            raise HTTPException(detail='Imagem não encontrada!', status_code=status.HTTP_404_NOT_FOUND)     
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Arquivo de imagem não encontrado!')     
 
 @router.get("/uploadfile/profile/images", response_model=List[Imagem], status_code=status.HTTP_200_OK)
 async def get_images(db: AsyncSession = Depends(get_session)):
@@ -87,7 +85,7 @@ async def delete_image(image_id: int,db: AsyncSession = Depends(get_session), us
 
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Arquivo de imagem não encontrado!')
 
 @router.put("/uploadfile/profile/{image_id}", response_model=Imagem, status_code=status.HTTP_202_ACCEPTED)
 async def update_image(image_id: int, file: UploadFile = File(...), db: AsyncSession = Depends(get_session), usuario_logado: UsuarioModel = Depends(get_current_user)):
@@ -122,11 +120,8 @@ async def update_image(image_id: int, file: UploadFile = File(...), db: AsyncSes
         imagem_up: ImagensModel = result.scalars().unique().one_or_none()
 
         if imagem_up:
-            imagem_up.url = nova_imagem.url
-            imagem_up.nome = nova_imagem.nome
-            imagem_up.id_usuario = nova_imagem.id_usuario
-        
+            imagem_up.url, imagem_up.nome, imagem_up.id_usuario = nova_imagem.url, nova_imagem.nome, nova_imagem.id_usuario
             await session.commit()
             return imagem_up
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Arquivo de imagem não encontrado!')
