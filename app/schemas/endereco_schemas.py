@@ -12,3 +12,4 @@ class EnderecoSchema(BaseModel):
 
 class EnderecoIdSchemas(EnderecoSchema):
     id: Optional[int] = None
+    usuario_id: Optional[int] = None

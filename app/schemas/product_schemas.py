@@ -13,3 +13,4 @@ class ProductSchema(BaseModel):
         
 class ProdutoIdSchemas(ProductSchema):
     id: Optional[int] = None
+    vendedor_id: Optional[int] = None

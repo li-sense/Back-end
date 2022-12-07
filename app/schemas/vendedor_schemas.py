@@ -12,3 +12,4 @@ class VendedorSchemas(BaseModel):
 
 class VendedorIdSchemas(VendedorSchemas):
     id: Optional[int] = None
+    usuario_id: Optional[int] = None
