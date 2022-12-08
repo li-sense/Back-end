@@ -13,7 +13,7 @@ RUN echo "PASS = 'wmaaipihzlczvpfy'" >> .env
 RUN echo "SECRET = 'd76a462ed27271b3f7a6b28b976eec210585278b'" >> .env
 
 #SQLITE
-RUN echo "DB_URL = 'sqlite+aiosqlite:///database.db'" >> .env
+RUN echo "DB_URL = 'postgresql+asyncpg://adm_li-sense:li-sense-db!@38.242.200.33:15432/adm_li-sense'" >> .env
 
 # JWT
 
