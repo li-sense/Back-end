@@ -11,4 +11,7 @@ class  HistoricoComprasUsuarioSchemas(BaseModel):
     class Config:
         orm_mode = True
 
-
+class  HistoricoComprasUsuarioIdSchemas(HistoricoComprasUsuarioSchemas):
+    id: Optional[int] = None
+    usuario_id: Optional[int] = None
+    produto_id: Optional[int] = None

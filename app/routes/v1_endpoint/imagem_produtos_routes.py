@@ -77,11 +77,11 @@ async def delete_imagem_produto(id: int, db: AsyncSession = Depends(get_session)
         product_image_del: ImagensProductModel = result.scalars().unique().one_or_none()
         
         if product_image_del:
-            await session.delete(product_image_del)
-            await session.commit()
             nome = product_image_del.nome
             path = "static/images/" + nome
             os.remove(path)
+            await session.delete(product_image_del)
+            await session.commit()
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Imagem de produto não encontrada', status_code=status.HTTP_404_NOT_FOUND)

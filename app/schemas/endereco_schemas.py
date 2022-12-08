@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class EnderecoSchema(BaseModel):
     rua: str
@@ -8,3 +9,7 @@ class EnderecoSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+class EnderecoIdSchemas(EnderecoSchema):
+    id: Optional[int] = None
+    usuario_id: Optional[int] = None

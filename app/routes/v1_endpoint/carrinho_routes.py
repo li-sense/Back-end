@@ -45,8 +45,14 @@ async def get_carrinho(db: AsyncSession = Depends(get_session), logado: UsuarioM
 async def add_to_carrinho(produto_id: int, db: AsyncSession = Depends(get_session), logado: UsuarioModel = Depends(get_current_user)):
     async with db as session:
         try:
-            query = select(CarrinhoModel).filter(CarrinhoModel.produto_id == produto_id).filter(CarrinhoModel.usuario_id == logado.id)
-        
+            queryproduto = select(ProductModel).filter(ProductModel.id == produto_id)
+            result_produto = await session.execute(queryproduto)
+            produto: ProductModel = result_produto.scalars().unique().one_or_none()
+                       
+            if not produto:
+                raise HTTPException(detail='Produto não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
+            
+            query = select(CarrinhoModel).filter(CarrinhoModel.produto_id == produto_id).filter(CarrinhoModel.usuario_id == logado.id)      
             result = await session.execute(query)
             item: CarrinhoModel = result.scalars().unique().one_or_none()
             
@@ -77,3 +83,4 @@ async def del_carrinho(produto_id: int, db: AsyncSession = Depends(get_session),
             return Response(status_code=status.HTTP_204_NO_CONTENT)
         else:
             raise HTTPException(detail='Produto não encontrado', status_code=status.HTTP_404_NOT_FOUND)
+
