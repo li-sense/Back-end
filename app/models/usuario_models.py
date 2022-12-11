@@ -16,6 +16,7 @@ class UsuarioModel(settings.DBBaseModel):
     sobrenome: str = Column(String(256), nullable=False)
     celular: str = Column(String(13), nullable=False)
     senha: str = Column(String(256), nullable=False)
+    imagem_usuario: str = Column(String(500))
    
     imagem = relationship("ImagensModel", uselist=False,backref="usuario")
     vendedor = relationship("VendedorModel",  uselist=False, backref="usuario")
