@@ -20,13 +20,6 @@ class VendedorModel(settings.DBBaseModel):
         lazy="joined"
     )
 
-    licensas = relationship(
-        "LicencaModel",
-        cascade="all,delete-orphan",
-        back_populates="vendedor",
-        uselist=True,
-        lazy="joined"
-    )
 
     usuario_id = Column(Integer, ForeignKey("usuario.id"))
 
