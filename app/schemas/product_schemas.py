@@ -6,7 +6,8 @@ class ProductSchema(BaseModel):
     descricao: str
     preco: str
     categoria: str
-    
+    imagem_produto: str
+
 
     class Config:
         orm_mode = True

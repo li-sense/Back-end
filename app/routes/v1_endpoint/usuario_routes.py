@@ -33,7 +33,8 @@ def get_logado(usuario_logado: UsuarioModel = Depends(get_current_user)):
 @router.post('/registra-usuarios', status_code=status.HTTP_201_CREATED, response_model=UsuarioSchemaBase)
 async def create_user(usuario: UsuarioSchemaCreate, db: AsyncSession = Depends(get_session)):
     novo_usuario: UsuarioModel = UsuarioModel(email=usuario.email, senha=gerar_hash_senha(usuario.senha),
-                                               nome=usuario.nome, sobrenome=usuario.sobrenome, celular=usuario.celular)
+                                               nome=usuario.nome, sobrenome=usuario.sobrenome, 
+                                               celular=usuario.celular, imagem_usuario=usuario.imagem_usuario)
     async with db as session:
         try:
             session.add(novo_usuario)
@@ -100,6 +101,8 @@ async def put_usuario(usuario_id: int, usuario: UsuarioSchemaUp, db: AsyncSessio
                 usuario_up.celular = usuario.celular
             if usuario.senha:
                 usuario_up.senha = gerar_hash_senha(usuario.senha)
+            if usuario.imagem_usuario:
+                usuario_up.imagem_usuario = usuario.imagem_usuario
 
             await session.commit()
 

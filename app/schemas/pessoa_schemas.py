@@ -6,6 +6,7 @@ class UsuarioSchemaBase(BaseModel):
     nome : str
     sobrenome : str
     celular : str
+    imagem_usuario: str
 
     class Config:
         orm_mode = True
@@ -21,6 +22,7 @@ class UsuarioSchemaUp(UsuarioSchemaBase):
     nome : Optional[str]
     sobrenome : Optional[str]
     celular : Optional[str]
+    imagem_usuario : Optional[str]
 
 
 class UsuarioIdSchemas(UsuarioSchemaBase):

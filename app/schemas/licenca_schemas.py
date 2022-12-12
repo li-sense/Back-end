@@ -1,16 +1,16 @@
+from datetime import date
 from typing import Optional
 from pydantic import BaseModel
 
 class LicencaSchema(BaseModel):
-    validade: float
+    validade: date
     quantidade: int
+    produto_id: Optional[int] = None
     
 
     class Config:
         orm_mode = True
 
 
-class LicencaSchemaUp(LicencaSchema):
-    validade: Optional[float]
-    quantidade: Optional[int]
-
+class LicencaIdSchema(LicencaSchema):
+    id: Optional[int] = None

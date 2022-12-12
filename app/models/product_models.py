@@ -14,9 +14,12 @@ class ProductModel(settings.DBBaseModel):
     descricao: str = Column(String(256), nullable=False)
     preco: str = Column(String(50), nullable=False)
     categoria: str = Column(String(50), nullable=False)
+    imagem_produto: str = Column(String(500), nullable=False)
     
     vendedor_id = Column(Integer, ForeignKey('vendedor.id'))
     vendedor = relationship("VendedorModel", back_populates='produtos', lazy='joined')
+
+    liceca = relationship("LicencaModel",  uselist=False, backref="produtos")
 
     avaliacao_produtos = relationship(
         "AvalicaoProdutosModel",
@@ -34,12 +37,5 @@ class ProductModel(settings.DBBaseModel):
         lazy="joined"
     )
 
-    licenca = relationship(
-        "LicencaModel",
-        cascade="all,delete-orphan",
-        back_populates="produto",
-        uselist=True,
-        lazy="joined"
-    )
 
     historico_compras = relationship("HistoricoComprasUsuarioModel", uselist=False, backref="produtos")

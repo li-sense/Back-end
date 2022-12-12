@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, status, Depends, HTTPException, Response
-from fastapi_pagination import paginate, add_pagination, LimitOffsetPage
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -10,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models.usuario_models import UsuarioModel
 from app.models.licenca_models import LicencaModel
 from app.models.vendedor_models import VendedorModel
-from app.schemas.licenca_schemas import LicencaSchema
+from app.schemas.licenca_schemas import LicencaSchema, LicencaIdSchema
 from app.config.deps import get_session, get_current_user
 
 
@@ -30,7 +29,7 @@ async def create_licenca(licenca: LicencaSchema, db: AsyncSession = Depends(get_
                     raise HTTPException(detail='Usuário Vendedor não encontrado.', status_code=status.HTTP_404_NOT_FOUND)
 
 
-            nova_licenca: LicencaModel = LicencaModel(validade=licenca.validade, quantidade=licenca.quantidade)
+            nova_licenca: LicencaModel = LicencaModel(validade=licenca.validade, quantidade=licenca.quantidade, produto_id=licenca.produto_id)
 
             session.add(nova_licenca)
             await session.commit()
@@ -41,16 +40,16 @@ async def create_licenca(licenca: LicencaSchema, db: AsyncSession = Depends(get_
                                 detail='Licença já cadastrada.')
 
 
-@router.get('/licencas', response_model=LimitOffsetPage[LicencaSchema])
+@router.get('/licencas', response_model=List[LicencaIdSchema])
 async def get_licencas(db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(LicencaModel)
         result = await session.execute(query)
         licencas = result.scalars().unique().all()
 
-        return paginate(licencas)
+        return licencas
 
-add_pagination(router)
+
 
 @router.get('/licenca-id/{licenca_id}', response_model=LicencaSchema, status_code=status.HTTP_200_OK)
 async def get_licenca_id(licenca_id: int, db: AsyncSession = Depends(get_session)):
