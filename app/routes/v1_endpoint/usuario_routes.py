@@ -139,8 +139,12 @@ async def recuperacao_senha(email: MensagemSchemas, db: AsyncSession = Depends(g
         if usuario:
             token_email: str = email.email[0]
             reset_token = generate_password_reset_token(email=token_email)
+            
+            token_reset = reset_token.replace(".", "#")
+            
+            print(token_reset)
 
-            html = f"<p>Link: http://localhost:9000/recovery/{reset_token}</p>"
+            html = f"<p>Link: http://localhost:9000/recovery/{token_reset}</p>"
 
             email_message = MessageSchema(
                 subject="Recuperação de Senha",
