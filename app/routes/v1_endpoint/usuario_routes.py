@@ -144,6 +144,7 @@ async def recuperacao_senha(email: MensagemSchemas, db: AsyncSession = Depends(g
             
             print(token_reset)
 
+
             html = f"<p>Link: http://localhost:9000/recovery/{token_reset}</p>"
 
 
